@@ -1,18 +1,22 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import {
+  setSuccessNotification,
+  setErrorNotification,
+} from './reducers/notificationReducer'
 import Togglable from './components/Togglable'
 import BlogsForm from './components/BlogsForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
+  const dispatch = useDispatch()
 
   const blogFormRef = useRef()
 
@@ -39,17 +43,10 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-
-      setSuccessMessage(`Welcome ${user.name}`)
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      dispatch(setSuccessNotification(`Welcome ${user.name}`, 3))
     } catch (error) {
-      // console.error(error);
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      console.error(error)
+      dispatch(setErrorNotification('Wrong credentials', 5))
     }
   }
 
@@ -61,22 +58,26 @@ const App = () => {
   const addBlog = (blog) => {
     blogFormRef.current.toggleVisibility()
 
-    try {
-      blogService.create(blog).then((returnedBlog) => {
+    blogService
+      .create(blog)
+      .then((returnedBlog) => {
         setBlogs(blogs.concat(returnedBlog))
+        dispatch(
+          setSuccessNotification(
+            `A new blog ${blog.title} by ${blog.author} added`,
+            5
+          )
+        )
       })
-
-      setSuccessMessage(`A new blog ${blog.title} by ${blog.author} added`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    } catch (error) {
-      console.error(error)
-      setErrorMessage(`Error adding blog ${blog.title} by ${blog.author}`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
+      .catch((error) => {
+        console.error(error)
+        dispatch(
+          setErrorNotification(
+            `Error adding blog ${blog.title} by ${blog.author}`,
+            5
+          )
+        )
+      })
   }
 
   const updateBlog = async (blogId, updatedBlog) => {
@@ -113,8 +114,7 @@ const App = () => {
     return (
       <div>
         <h2>login to application</h2>
-        <Notification message={successMessage} isError={false}></Notification>
-        <Notification message={errorMessage} isError={true}></Notification>{' '}
+        <Notification />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -144,9 +144,7 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
-
-        <Notification message={successMessage} isError={false}></Notification>
-        <Notification message={errorMessage} isError={true}></Notification>
+        <Notification></Notification>
         <p>
           {user.name} logged in <button onClick={handleLogout}>logout</button>
         </p>
