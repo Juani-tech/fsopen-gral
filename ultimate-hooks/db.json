@@ -1,0 +1,66 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom-hooks are awesome!"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "content": "Notita",
+      "id": 3
+    },
+    {
+      "content": "Notita notona",
+      "id": 4
+    },
+    {
+      "content": "Notarda",
+      "id": 5
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "mluukkai",
+      "number": "040-5483923"
+    },
+    {
+      "id": 2,
+      "name": "hellas",
+      "number": "012-123123"
+    },
+    {
+      "name": "Juani",
+      "number": "101010",
+      "id": 3
+    },
+    {
+      "name": "Aaa",
+      "number": "10101",
+      "id": 4
+    },
+    {
+      "name": "Aaa",
+      "number": "10101",
+      "id": 5
+    },
+    {
+      "name": "Yo",
+      "number": "1010",
+      "id": 6
+    },
+    {
+      "name": "Juani",
+      "number": "101010",
+      "id": 7
+    },
+    {
+      "name": "Juanito",
+      "number": "1010",
+      "id": 8
+    }
+  ]
+}
