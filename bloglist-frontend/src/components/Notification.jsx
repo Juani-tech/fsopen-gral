@@ -1,9 +1,16 @@
-const Notification = ({ message, isError }) => {
-  if (message === null) {
+import { useNotificationValue } from '../NotificationContext'
+
+const Notification = () => {
+  const content = useNotificationValue()
+  if (!content) {
     return null
   }
+  const message = content.content
+  const isError = content.isError
+
   let color
   isError ? (color = 'red') : (color = 'green')
+
   const notificationStyle = {
     color: color,
     background: 'lightgrey',

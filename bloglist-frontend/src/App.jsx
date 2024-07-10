@@ -4,9 +4,11 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogsForm from './components/BlogsForm'
 import blogService from './services/blogs'
+import { useNotificationDispatch } from './NotificationContext'
 import loginService from './services/login'
 
 const App = () => {
+  const notificationDispatch = useNotificationDispatch()
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -40,15 +42,20 @@ const App = () => {
       setUsername('')
       setPassword('')
 
-      setSuccessMessage(`Welcome ${user.name}`)
+      notificationDispatch({
+        type: 'SET_SUCCESS',
+        payload: `Welcome ${user.name}`,
+      })
       setTimeout(() => {
-        setSuccessMessage(null)
+        notificationDispatch({ type: 'RESET' })
       }, 5000)
     } catch (error) {
-      // console.error(error);
-      setErrorMessage('Wrong credentials')
+      notificationDispatch({
+        type: 'SET_ERROR',
+        payload: 'Wrong credentials',
+      })
       setTimeout(() => {
-        setErrorMessage(null)
+        notificationDispatch({ type: 'RESET' })
       }, 5000)
     }
   }
@@ -61,22 +68,28 @@ const App = () => {
   const addBlog = (blog) => {
     blogFormRef.current.toggleVisibility()
 
-    try {
-      blogService.create(blog).then((returnedBlog) => {
+    blogService
+      .create(blog)
+      .then((returnedBlog) => {
         setBlogs(blogs.concat(returnedBlog))
+        notificationDispatch({
+          type: 'SET_SUCCESS',
+          payload: `A new blog ${blog.title} by ${blog.author} added`,
+        })
+        setTimeout(() => {
+          notificationDispatch({ type: 'RESET' })
+        }, 5000)
       })
-
-      setSuccessMessage(`A new blog ${blog.title} by ${blog.author} added`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    } catch (error) {
-      console.error(error)
-      setErrorMessage(`Error adding blog ${blog.title} by ${blog.author}`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
+      .catch((error) => {
+        console.error(error)
+        notificationDispatch({
+          type: 'SET_ERROR',
+          payload: `Error adding blog ${blog.title} by ${blog.author}`,
+        })
+        setTimeout(() => {
+          notificationDispatch({ type: 'RESET' })
+        }, 5000)
+      })
   }
 
   const updateBlog = async (blogId, updatedBlog) => {
@@ -113,8 +126,7 @@ const App = () => {
     return (
       <div>
         <h2>login to application</h2>
-        <Notification message={successMessage} isError={false}></Notification>
-        <Notification message={errorMessage} isError={true}></Notification>{' '}
+        <Notification></Notification>{' '}
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -145,8 +157,7 @@ const App = () => {
       <div>
         <h2>blogs</h2>
 
-        <Notification message={successMessage} isError={false}></Notification>
-        <Notification message={errorMessage} isError={true}></Notification>
+        <Notification></Notification>
         <p>
           {user.name} logged in <button onClick={handleLogout}>logout</button>
         </p>
