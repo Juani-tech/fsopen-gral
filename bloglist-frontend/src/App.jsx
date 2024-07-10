@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
+// import Blog from './components/Blog'
 import Notification from './components/Notification'
 import {
   setSuccessNotification,
@@ -10,6 +10,8 @@ import BlogsForm from './components/BlogsForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useDispatch } from 'react-redux'
+import BlogList from './components/BlogList'
+import { initializeBlogs, concatBlog } from './reducers/blogReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -21,8 +23,8 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+    dispatch(initializeBlogs())
+  })
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -55,30 +57,53 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = (blog) => {
-    blogFormRef.current.toggleVisibility()
+  // const addBlog = (blog) => {
+  //   blogService
+  //     .create(blog)
+  //     .then((returnedBlog) => {
+  //       dispatch(concatBlog(returnedBlog))
+  //       dispatch(
+  //         setSuccessNotification(
+  //           `A new blog ${blog.title} by ${blog.author} added`,
+  //           5
+  //         )
+  //       )
+  //     })
+  //     .catch((error) => {
+  //       console.error(error)
+  //       dispatch(
+  //         setErrorNotification(
+  //           `Error adding blog ${blog.title} by ${blog.author}`,
+  //           5
+  //         )
+  //       )
+  //     })
+  // }
 
-    blogService
-      .create(blog)
-      .then((returnedBlog) => {
-        setBlogs(blogs.concat(returnedBlog))
-        dispatch(
-          setSuccessNotification(
-            `A new blog ${blog.title} by ${blog.author} added`,
-            5
-          )
-        )
-      })
-      .catch((error) => {
-        console.error(error)
-        dispatch(
-          setErrorNotification(
-            `Error adding blog ${blog.title} by ${blog.author}`,
-            5
-          )
-        )
-      })
-  }
+  // const addBlog = (blog) => {
+  //   blogFormRef.current.toggleVisibility()
+
+  //   blogService
+  //     .create(blog)
+  //     .then((returnedBlog) => {
+  //       setBlogs(blogs.concat(returnedBlog))
+  //       dispatch(
+  //         setSuccessNotification(
+  //           `A new blog ${blog.title} by ${blog.author} added`,
+  //           5
+  //         )
+  //       )
+  //     })
+  //     .catch((error) => {
+  //       console.error(error)
+  //       dispatch(
+  //         setErrorNotification(
+  //           `Error adding blog ${blog.title} by ${blog.author}`,
+  //           5
+  //         )
+  //       )
+  //     })
+  // }
 
   const updateBlog = async (blogId, updatedBlog) => {
     console.log('Updating blogs')
@@ -150,7 +175,7 @@ const App = () => {
         </p>
 
         <Togglable buttonLabel="new blog" ref={blogFormRef}>
-          <BlogsForm createBlog={addBlog} />
+          <BlogsForm />
         </Togglable>
         <button
           onClick={() => {
@@ -159,7 +184,8 @@ const App = () => {
         >
           Sort by likes
         </button>
-        {blogs.map((blog) => (
+        <BlogList></BlogList>
+        {/* {blogs.map((blog) => (
           <Blog
             key={blog.id}
             blog={blog}
@@ -167,7 +193,7 @@ const App = () => {
             removeBlog={removeBlog}
             username={user.username}
           />
-        ))}
+        ))} */}
       </div>
     )
   }

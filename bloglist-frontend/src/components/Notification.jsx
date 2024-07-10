@@ -2,17 +2,12 @@ import { useSelector } from 'react-redux'
 
 const Notification = () => {
   const notification = useSelector((state) => state.notifications)
-  const isError = notification.isError
   const content = notification.content
-  console.log('isError:', isError)
-  console.log('content:', content)
-  // if (message === null) {
-  //   return null
-  // }
-
   if (!content) {
     return null
   }
+
+  const isError = notification.isError
 
   let color
 

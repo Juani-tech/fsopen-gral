@@ -7,7 +7,6 @@ const notificationSlice = createSlice({
   initialState,
   reducers: {
     showSuccessNotification(state, action) {
-      console.log('contenido: ', action)
       return { content: action.payload, isError: false }
     },
 
@@ -30,7 +29,6 @@ export const {
 // Time is supposed to be in seconds
 export const setSuccessNotification = (content, time) => {
   return (dispatch) => {
-    console.log('Entro a settear succeso')
     dispatch(showSuccessNotification(content))
 
     setTimeout(() => {
