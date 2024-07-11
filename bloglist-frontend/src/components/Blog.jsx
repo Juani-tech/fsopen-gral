@@ -1,12 +1,11 @@
+import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import { update, remove } from '../services/blogs'
+import { useQueryClient } from '@tanstack/react-query'
 
-const addLike = async (blog, setLikes, updateBlog) => {
-  const updatedBlog = { ...blog, likes: blog.likes + 1 }
-  updateBlog(blog.id, updatedBlog)
-  setLikes(updatedBlog.likes)
-}
+const Blog = ({ blog, username }) => {
+  const queryClient = useQueryClient()
 
-const Blog = ({ blog, updateBlog, removeBlog, username }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -15,8 +14,41 @@ const Blog = ({ blog, updateBlog, removeBlog, username }) => {
     marginBottom: 5,
   }
 
+  const updateBlogMutation = useMutation({
+    mutationFn: update,
+    onSuccess: (updatedBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      const updatedBlogs = blogs.map((blog) =>
+        blog.id !== updatedBlog.id ? blog : updatedBlog
+      )
+
+      queryClient.setQueryData(['blogs'], updatedBlogs)
+    },
+  })
+
+  const removeBlogMutation = useMutation({
+    mutationFn: remove,
+    onSuccess: (removedBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      const updatedBlogs = blogs.filter((blog) => {
+        return blog.id !== removedBlog.id
+      })
+
+      queryClient.setQueryData(['blogs'], updatedBlogs)
+    },
+  })
+
+  const handleLike = (blog) => {
+    updateBlogMutation.mutate({ ...blog, likes: blog.likes + 1 })
+  }
+
+  const handleRemove = (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      removeBlogMutation.mutate(blog)
+    }
+  }
+
   const [visible, setVisible] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
 
   const showWhenVisible = { display: visible ? '' : 'none' }
 
@@ -42,11 +74,8 @@ const Blog = ({ blog, updateBlog, removeBlog, username }) => {
       <div style={showWhenVisible} className="togglableContent">
         <div>{blog.url}</div>
         <div>
-          likes {likes}{' '}
-          <button
-            data-testid="like-button"
-            onClick={() => addLike(blog, setLikes, updateBlog)}
-          >
+          likes {blog.likes}{' '}
+          <button data-testid="like-button" onClick={() => handleLike(blog)}>
             like
           </button>
         </div>
@@ -54,7 +83,7 @@ const Blog = ({ blog, updateBlog, removeBlog, username }) => {
         {blog.user.username === username && (
           <button
             onClick={() => {
-              removeBlog(blog)
+              handleRemove(blog)
             }}
           >
             remove

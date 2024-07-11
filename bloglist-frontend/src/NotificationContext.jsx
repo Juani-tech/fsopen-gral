@@ -28,10 +28,6 @@ export const useNotificationDispatch = () => {
 }
 
 export const NotificationContextProvider = (props) => {
-  // const [notification, notificationDispatch] = useReducer(notificationReducer, {
-  //   content: '',
-  //   isError: false,
-  // })
   const [notification, notificationDispatch] = useReducer(
     notificationReducer,
     null
