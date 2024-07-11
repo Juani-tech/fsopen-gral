@@ -17,7 +17,7 @@ blogsRouter.post("/", middleware.userExtractor, async (request, response) => {
   }
 
   if (!body.title || !body.url) {
-    response.status(400).end();
+    return response.status(400).end();
   }
 
   const blog = new Blog({
@@ -35,7 +35,7 @@ blogsRouter.post("/", middleware.userExtractor, async (request, response) => {
 
   const populatedBlog = await savedBlog.populate("user", { username: 1 });
 
-  response.status(201).json(populatedBlog);
+  return response.status(201).json(populatedBlog);
   // response.status(201).json(savedBlog);
 });
 
@@ -56,12 +56,13 @@ blogsRouter.delete(
     await Blog.findByIdAndDelete(request.params.id);
 
     const user = await User.findById(request.user.id);
+
     user.blogs = user.blogs.filter(
       (blog) => blog.id.toString() !== request.params.id
     );
     await user.save();
 
-    response.status(201).json(blog).end();
+    return response.status(201).json(blog).end();
   }
 );
 
@@ -76,9 +77,9 @@ blogsRouter.put("/:id", async (request, response) => {
   );
   if (updatedBlog) {
     const responseBlog = await updatedBlog.populate("user");
-    response.json(responseBlog);
+    return response.json(responseBlog);
   } else {
-    response.status(404).end();
+    return response.status(404).end();
   }
 });
 

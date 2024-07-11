@@ -17,9 +17,8 @@ const App = () => {
       );
       queryClient.setQueryData(["anecdotes"], updatedAnecdotes);
     },
-    
   });
-  
+
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 });
     notificationDispatch({

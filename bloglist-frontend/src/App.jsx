@@ -7,24 +7,18 @@ import { getAll, setToken } from './services/blogs'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNotificationDispatch } from './NotificationContext'
 import loginService from './services/login'
+import { useUserDispatch, useUserValue } from './UserContext'
 
 const App = () => {
   const notificationDispatch = useNotificationDispatch()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-
+  const userDispatch = useUserDispatch()
+  const user = useUserValue()
   const blogFormRef = useRef()
 
+  // Without useEffect it raises a warning
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      console.log('USER: ', user)
-      setUser(user)
-      setToken(user.token)
-    }
-  }, [])
+    userDispatch({ type: 'GET_PREVIOUS_SESSION' })
+  })
 
   const result = useQuery({
     queryKey: ['blogs'],
@@ -42,19 +36,18 @@ const App = () => {
 
   const blogs = result.data
 
-  // useEffect(() => {
-  //   blogService.getAll().then((blogs) => setBlogs(blogs))
-  // }, [])
-
   const handleLogin = async (event) => {
     event.preventDefault()
+    const username = event.target.username.value
+    const password = event.target.password.value
     try {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
+      userDispatch({
+        type: 'SET',
+        payload: user,
+      })
 
       notificationDispatch({
         type: 'SET_SUCCESS',
@@ -76,7 +69,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
+    userDispatch({ type: 'RESET' })
   }
 
   if (user === null) {
@@ -87,23 +80,11 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-            <input
-              data-testid="username"
-              type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
-            />
+            <input data-testid="username" type="text" name="username" />
           </div>
           <div>
             password
-            <input
-              data-testid="password"
-              type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
+            <input data-testid="password" type="password" name="password" />
           </div>
           <button type="submit">login</button>
         </form>
