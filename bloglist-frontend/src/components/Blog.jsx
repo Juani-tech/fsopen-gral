@@ -1,7 +1,4 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-// import { voteAnecdote } from '../reducers/anecdoteReducer'
-// import { setNotification } from '../reducers/notificationReducer'
 
 const addLike = async (blog, setLikes, updateBlog) => {
   const updatedBlog = { ...blog, likes: blog.likes + 1 }
