@@ -4,7 +4,7 @@ import Togglable from './components/Togglable'
 import BlogsForm from './components/BlogsForm'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
-import BlogList from './components/BlogList'
+import BlogList, { Blog } from './components/BlogList'
 import { initializeBlogs } from './reducers/blogReducer'
 import { getPreviousLogin, logout } from './reducers/userReducer'
 import LoginForm from './components/LoginForm'
@@ -30,6 +30,10 @@ const App = () => {
 
   const user = useSelector((state) => state.user)
 
+  const blogs = useSelector((state) => state.blogs)
+  const match = useMatch('/blogs/:id')
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
+
   if (user === null) {
     return <LoginForm></LoginForm>
   } else {
@@ -51,6 +55,7 @@ const App = () => {
           <Route path="/" element={<BlogList></BlogList>} />
           <Route path="/users" element={<Users></Users>} />
           <Route path="/users/:id" element={<User />} />
+          <Route path="blogs/:id" element={<Blog blog={blog} />} />
         </Routes>
       </>
     )

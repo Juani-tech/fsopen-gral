@@ -1,48 +1,35 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { Link } from 'react-router-dom'
 
-const Blog = ({ blog }) => {
+export const Blog = ({ blog }) => {
   // console.log('Username received: ', username)
   // console.log('blog received in Blog', blog)
   const dispatch = useDispatch()
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-
-  const [visible, setVisible] = useState(false)
-
-  const showWhenVisible = { display: visible ? '' : 'none' }
   const user = useSelector((state) => state.user)
 
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
+  if (!blog) return null
+
+  // const blogStyle = {
+  //   paddingTop: 10,
+  //   paddingLeft: 2,
+  //   border: 'solid',
+  //   borderWidth: 1,
+  //   marginBottom: 5,
+  // }
 
   return (
-    <div style={blogStyle} className="blog">
+    <div className="blog">
       <div>
-        {blog.title} {blog.author}{' '}
-        {!visible && (
-          <button data-testid="view-button" onClick={toggleVisibility}>
-            view
-          </button>
-        )}
-        {visible && (
-          <button data-testid="hide-button" onClick={toggleVisibility}>
-            hide
-          </button>
-        )}
+        <h1>
+          {blog.title} {blog.author}
+        </h1>
       </div>
-      <div style={showWhenVisible} className="togglableContent">
-        <div>{blog.url}</div>
+      <div className="togglableContent">
+        <p>{blog.url}</p>
         <div>
-          likes {blog.likes}{' '}
+          {blog.likes} likes
           <button
             data-testid="like-button"
             onClick={() => dispatch(likeBlog(blog))}
@@ -50,7 +37,7 @@ const Blog = ({ blog }) => {
             like
           </button>
         </div>
-        <div>{blog.user.name}</div>
+        <div>Added by {blog.user.name}</div>
         {blog.user.username === user.username && (
           <button
             onClick={() => {
@@ -68,7 +55,14 @@ const Blog = ({ blog }) => {
 const BlogList = () => {
   const blogs = useSelector(({ blogs }) => blogs)
   return blogs.map((blog) => {
-    return <Blog key={blog.id} blog={blog}></Blog>
+    return (
+      <Link key={blog.id} to={`/blogs/${blog.id}`}>
+        {/* <Blog blog={blog}></Blog> */}
+        <p>
+          {blog.title} {blog.author}
+        </p>
+      </Link>
+    )
   })
 }
 
