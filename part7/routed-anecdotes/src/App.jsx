@@ -1,13 +1,15 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/no-unescaped-entities */
 import { useState } from "react";
 import {
-  BrowserRouter as Router,
+  // BrowserRouter as Router,
   Routes,
   Route,
   Link,
-  Navigate,
-  useParams,
+  // Navigate,
+  // useParams,
   useMatch,
-  useNavigate,
+  // useNavigate,
 } from "react-router-dom";
 import { useField } from "./hooks";
 
@@ -32,7 +34,7 @@ const Menu = () => {
 
 const Anecdote = ({ anecdote }) => {
   // useParams para extraer el parametro de la url (:id)
-  const id = useParams().id;
+  // const id = useParams().id;
   return (
     <div>
       <h2>{anecdote.content}</h2>
@@ -55,27 +57,27 @@ const AnecdoteList = ({ anecdotes }) => (
   </div>
 );
 
-const About = () => (
-  <div>
-    <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
+// const About = () => (
+//   <div>
+//     <h2>About anecdote app</h2>
+//     <p>According to Wikipedia:</p>
 
-    <em>
-      An anecdote is a brief, revealing account of an individual person or an
-      incident. Occasionally humorous, anecdotes differ from jokes because their
-      primary purpose is not simply to provoke laughter but to reveal a truth
-      more general than the brief tale itself, such as to characterize a person
-      by delineating a specific quirk or trait, to communicate an abstract idea
-      about a person, place, or thing through the concrete details of a short
-      narrative. An anecdote is "a story with a point."
-    </em>
+//     <em>
+//       An anecdote is a brief, revealing account of an individual person or an
+//       incident. Occasionally humorous, anecdotes differ from jokes because their
+//       primary purpose is not simply to provoke laughter but to reveal a truth
+//       more general than the brief tale itself, such as to characterize a person
+//       by delineating a specific quirk or trait, to communicate an abstract idea
+//       about a person, place, or thing through the concrete details of a short
+//       narrative. An anecdote is "a story with a point."
+//     </em>
 
-    <p>
-      Software engineering is full of excellent anecdotes, at this app you can
-      find the best and add more.
-    </p>
-  </div>
-);
+//     <p>
+//       Software engineering is full of excellent anecdotes, at this app you can
+//       find the best and add more.
+//     </p>
+//   </div>
+// );
 
 const Footer = () => (
   <div>
@@ -150,25 +152,25 @@ const App = () => {
     },
   ]);
 
-  const [notification, setNotification] = useState("");
+  // const [notification, setNotification] = useState("");
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
   };
 
-  const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
+  // const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
 
-  const vote = (id) => {
-    const anecdote = anecdoteById(id);
+  // const vote = (id) => {
+  //   const anecdote = anecdoteById(id);
 
-    const voted = {
-      ...anecdote,
-      votes: anecdote.votes + 1,
-    };
+  //   const voted = {
+  //     ...anecdote,
+  //     votes: anecdote.votes + 1,
+  //   };
 
-    setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
-  };
+  //   setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
+  // };
 
   const match = useMatch("/anecdotes/:id");
   const anecdote = match

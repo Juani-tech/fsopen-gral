@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { setErrorNotification } from '../reducers/notificationReducer'
 import { getUsersWithBlogs } from '../services/user'
-import Notification from './Notification'
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 const Users = () => {
   const [usersWithBlogs, setUsersWithBlogs] = useState([])
@@ -10,7 +10,6 @@ const Users = () => {
   useEffect(() => {
     getUsersWithBlogs()
       .then((usersWithBlogs) => {
-        console.log('usersWithBlogs', usersWithBlogs)
         setUsersWithBlogs(usersWithBlogs)
       })
       .catch((error) => {
@@ -34,7 +33,11 @@ const Users = () => {
           {usersWithBlogs.map((userWithBlogs) => {
             return (
               <tr key={userWithBlogs.id}>
-                <td>{userWithBlogs.name}</td>
+                <td>
+                  <Link to={`/users/${userWithBlogs.id}`}>
+                    {userWithBlogs.name}
+                  </Link>
+                </td>
                 <td>{userWithBlogs.blogs.length}</td>
               </tr>
             )

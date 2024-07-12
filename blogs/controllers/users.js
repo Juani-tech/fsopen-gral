@@ -28,12 +28,17 @@ usersRouter.post("/", async (request, response) => {
 
   const savedUser = await user.save();
 
-  response.json(savedUser);
+  return response.json(savedUser);
 });
 
 usersRouter.get("/", async (request, response) => {
   const users = await User.find({}).populate("blogs");
-  response.json(users);
+  return response.json(users);
+});
+
+usersRouter.get("/:id", async (request, response) => {
+  const user = await User.findById(request.params.id).populate("blogs");
+  return response.json(user);
 });
 
 module.exports = usersRouter;

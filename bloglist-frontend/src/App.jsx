@@ -19,6 +19,7 @@ import {
   useNavigate,
 } from 'react-router-dom'
 import Users from './components/Users'
+import User from './components/User'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -49,6 +50,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<BlogList></BlogList>} />
           <Route path="/users" element={<Users></Users>} />
+          <Route path="/users/:id" element={<User />} />
         </Routes>
       </>
     )
