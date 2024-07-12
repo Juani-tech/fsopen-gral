@@ -37,7 +37,9 @@ usersRouter.get("/", async (request, response) => {
 });
 
 usersRouter.get("/:id", async (request, response) => {
+  // When using populate, the name of the thing I want to 'change' must be passed
   const user = await User.findById(request.params.id).populate("blogs");
+
   return response.json(user);
 });
 

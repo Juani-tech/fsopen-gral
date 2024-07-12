@@ -20,12 +20,17 @@ import {
 } from 'react-router-dom'
 import Users from './components/Users'
 import User from './components/User'
+import Menu from './components/Menu'
+import { useEffect } from 'react'
 
 const App = () => {
   const dispatch = useDispatch()
   const blogFormRef = useRef()
 
-  dispatch(initializeBlogs())
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
   dispatch(getPreviousLogin())
 
   const user = useSelector((state) => state.user)
@@ -40,12 +45,9 @@ const App = () => {
     return (
       <>
         <div>
-          <h2>blogs</h2>
+          <h2>Blog App</h2>
           <Notification></Notification>
-          <p>
-            {user.username} logged in{' '}
-            <button onClick={() => dispatch(logout())}>logout</button>
-          </p>
+          <Menu></Menu>
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogsForm />
           </Togglable>
@@ -55,7 +57,7 @@ const App = () => {
           <Route path="/" element={<BlogList></BlogList>} />
           <Route path="/users" element={<Users></Users>} />
           <Route path="/users/:id" element={<User />} />
-          <Route path="blogs/:id" element={<Blog blog={blog} />} />
+          <Route path="/blogs/:id" element={<Blog blog={blog} />} />
         </Routes>
       </>
     )

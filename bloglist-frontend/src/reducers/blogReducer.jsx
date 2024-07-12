@@ -3,7 +3,7 @@ import {
   setErrorNotification,
   setSuccessNotification,
 } from './notificationReducer'
-
+import { useEffect } from 'react'
 import blogService from '../services/blogs'
 const initialState = []
 
@@ -38,8 +38,10 @@ export const { setBlogs, concatBlog, updateBlog, deleteBlog } =
   blogSlice.actions
 
 export const initializeBlogs = () => {
+  console.log('Ejecutando initialize...')
   return async (dispatch) => {
     const blogs = await blogService.getAll()
+    console.log('Blogs: ', blogs)
     dispatch(setBlogs(blogs))
   }
 }
@@ -83,6 +85,18 @@ export const removeBlog = (blog) => {
       await blogService.remove(blog.id)
       dispatch(deleteBlog(blog.id))
     }
+  }
+}
+
+export const addComment = (blog, comment) => {
+  return async (dispatch) => {
+    blogService
+      .postComment(blog.id, comment)
+      .then((response) => {
+        const updatedBlog = { ...blog, comments: [...blog.comments, response] }
+        dispatch(updateBlog(updatedBlog))
+      })
+      .catch((error) => console.log('error when adding comment: ', error))
   }
 }
 
