@@ -15,6 +15,7 @@ import User from './components/User'
 import Menu from './components/Menu'
 import { useEffect } from 'react'
 import { Container } from '@mui/material'
+import Login from './services/login'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -50,6 +51,7 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<BlogList></BlogList>} />
+          <Route path="/login" element={<LoginForm></LoginForm>}></Route>
           <Route path="/users" element={<Users></Users>} />
           <Route path="/users/:id" element={<User />} />
           <Route path="/blogs/:id" element={<Blog blog={blog} />} />

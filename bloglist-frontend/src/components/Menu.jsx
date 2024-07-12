@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../reducers/userReducer'
+import { AppBar, Toolbar, IconButton, Button } from '@mui/material'
 
 const Menu = () => {
   const dispatch = useDispatch()
@@ -8,19 +9,24 @@ const Menu = () => {
     paddingRight: 5,
   }
   const user = useSelector((state) => state.user)
+
   return (
-    <div>
-      <Link style={menuStyle} to="/">
-        blogs
-      </Link>
-      <Link style={menuStyle} to="/users">
-        users
-      </Link>
-      <span style={menuStyle}>{user.name} logged in</span>
-      <button style={menuStyle} onClick={() => dispatch(logout())}>
-        logout
-      </button>
-    </div>
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton edge="start" color="inherit" aria-label="menu"></IconButton>
+        <Button color="inherit" component={Link} to="/">
+          blogs
+        </Button>
+        <Button color="inherit" component={Link} to="/users">
+          {/* <Link to="/users">users</Link> */}
+          users
+        </Button>
+        <Button color="inherit" onClick={() => dispatch(logout())}>
+          logout
+        </Button>
+        {user ? <em>{user.name} logged in</em> : <Link to="/login">login</Link>}
+      </Toolbar>
+    </AppBar>
   )
 }
 
