@@ -4,24 +4,17 @@ import Togglable from './components/Togglable'
 import BlogsForm from './components/BlogsForm'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
-import BlogList, { Blog } from './components/BlogList'
+import BlogList from './components/BlogList'
+import Blog from './components/Blog'
 import { initializeBlogs } from './reducers/blogReducer'
-import { getPreviousLogin, logout } from './reducers/userReducer'
+import { getPreviousLogin } from './reducers/userReducer'
 import LoginForm from './components/LoginForm'
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  Navigate,
-  useParams,
-  useMatch,
-  useNavigate,
-} from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 import Users from './components/Users'
 import User from './components/User'
 import Menu from './components/Menu'
 import { useEffect } from 'react'
+import { Container } from '@mui/material'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -40,18 +33,20 @@ const App = () => {
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
 
   if (user === null) {
-    return <LoginForm></LoginForm>
+    return (
+      <Container>
+        <LoginForm></LoginForm>
+      </Container>
+    )
   } else {
     return (
-      <>
-        <div>
-          <h2>Blog App</h2>
-          <Notification></Notification>
-          <Menu></Menu>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogsForm />
-          </Togglable>
-        </div>
+      <Container>
+        <h2>Blog App</h2>
+        <Notification></Notification>
+        <Menu></Menu>
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
+          <BlogsForm />
+        </Togglable>
 
         <Routes>
           <Route path="/" element={<BlogList></BlogList>} />
@@ -59,7 +54,7 @@ const App = () => {
           <Route path="/users/:id" element={<User />} />
           <Route path="/blogs/:id" element={<Blog blog={blog} />} />
         </Routes>
-      </>
+      </Container>
     )
   }
 }
