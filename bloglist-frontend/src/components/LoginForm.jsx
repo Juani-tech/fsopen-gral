@@ -1,6 +1,7 @@
 import { useDispatch } from 'react-redux'
 import Notification from './Notification'
 import { login } from '../reducers/userReducer'
+import { TextField, Button, Container } from '@mui/material'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
@@ -16,14 +17,24 @@ const LoginForm = () => {
       <Notification />
       <form onSubmit={handleLogin}>
         <div>
-          username
-          <input data-testid="username" type="text" name="username" />
+          <TextField
+            label="username"
+            data-testid="username"
+            type="text"
+            name="username"
+          />
         </div>
         <div>
-          password
-          <input data-testid="password" type="password" name="password" />
+          <TextField
+            label="password"
+            data-testid="password"
+            type="password"
+            name="password"
+          />
         </div>
-        <button type="submit">login</button>
+        <Button variant="contained" color="primary" type="submit">
+          login
+        </Button>
       </form>
     </div>
   )
