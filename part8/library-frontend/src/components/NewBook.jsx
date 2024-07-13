@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { ALL_BOOKS, CREATE_BOOK } from "../queries";
+import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from "../queries";
 
 const NewBook = (props) => {
   const [title, setTitle] = useState("");
@@ -19,6 +19,29 @@ const NewBook = (props) => {
         return {
           allBooks: allBooks.concat(response.data.addBook),
         };
+      });
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        const author = response.data.addBook.author;
+        const foundAuthor = allAuthors.find((a) => a.name === author);
+        if (!foundAuthor) {
+          return {
+            allAuthors: allAuthors.concat({
+              name: author,
+              born: null,
+              bookCount: 1,
+            }),
+          };
+        } else {
+          const updatedAuthor = {
+            ...foundAuthor,
+            bookCount: foundAuthor.bookCount + 1,
+          };
+          return {
+            allAuthors: allAuthors.map((a) =>
+              a.name === author ? updatedAuthor : a
+            ),
+          };
+        }
       });
     },
   });
