@@ -3,6 +3,17 @@ import { setErrorNotification } from '../reducers/notificationReducer'
 import { getUsersWithBlogs } from '../services/user'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  TextField,
+  Button,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+} from '@mui/material'
 
 const Users = () => {
   const [usersWithBlogs, setUsersWithBlogs] = useState([])
@@ -21,29 +32,30 @@ const Users = () => {
   return (
     <div>
       <h2>Users</h2>
-      <table>
-        <caption>Users with their ammount of blogs published</caption>
-        <thead>
-          <tr>
-            <th>Users</th>
-            <th>Blogs created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {usersWithBlogs.map((userWithBlogs) => {
-            return (
-              <tr key={userWithBlogs.id}>
-                <td>
-                  <Link to={`/users/${userWithBlogs.id}`}>
-                    {userWithBlogs.name}
-                  </Link>
-                </td>
-                <td>{userWithBlogs.blogs.length}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Users</TableCell>
+              <TableCell>Blogs created</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {usersWithBlogs.map((userWithBlogs) => {
+              return (
+                <TableRow key={userWithBlogs.id}>
+                  <TableCell>
+                    <Link to={`/users/${userWithBlogs.id}`}>
+                      {userWithBlogs.name}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{userWithBlogs.blogs.length}</TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }

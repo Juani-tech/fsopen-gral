@@ -45,13 +45,14 @@ const App = () => {
         <h2>Blog App</h2>
         <Notification></Notification>
         <Menu></Menu>
-        <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        {/* <Togglable buttonLabel="new blog" ref={blogFormRef}>
           <BlogsForm />
-        </Togglable>
+        </Togglable> */}
 
         <Routes>
           <Route path="/" element={<BlogList></BlogList>} />
           <Route path="/login" element={<LoginForm></LoginForm>}></Route>
+          <Route path="/create" element={<BlogsForm></BlogsForm>}></Route>
           <Route path="/users" element={<Users></Users>} />
           <Route path="/users/:id" element={<User />} />
           <Route path="/blogs/:id" element={<Blog blog={blog} />} />

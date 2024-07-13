@@ -17,8 +17,10 @@ const Menu = () => {
         <Button color="inherit" component={Link} to="/">
           blogs
         </Button>
+        <Button color="inherit" component={Link} to="/create">
+          create blog
+        </Button>
         <Button color="inherit" component={Link} to="/users">
-          {/* <Link to="/users">users</Link> */}
           users
         </Button>
         <Button color="inherit" onClick={() => dispatch(logout())}>
