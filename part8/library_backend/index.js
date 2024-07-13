@@ -1,5 +1,7 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
+const { v1: uuid } = require("uuid");
+const { GraphQLError } = require("graphql");
 
 let authors = [
   {
@@ -109,7 +111,7 @@ const typeDefs = `
     type Author {
         name: String!
         id: ID!,
-        born: Int!
+        born: Int
         bookCount: Int!
     }
 
@@ -118,6 +120,14 @@ const typeDefs = `
         authorCount: Int!
         allBooks(author: String, genre: String): [Book!]!
         allAuthors: [Author!]!
+    }
+    type Mutation {
+        addBook(
+            title: String!
+            author: String!
+            published: Int!
+            genres: [String!]!
+        ): Book
     }
 `;
 
@@ -148,9 +158,35 @@ const resolvers = {
       return authors;
     },
   },
+
   Author: {
     bookCount: (root) => {
       return books.filter((book) => book.author === root.name).length;
+    },
+  },
+
+  Mutation: {
+    addBook: (root, args) => {
+      if (
+        books.find(
+          (book) => book.title === args.title && book.author === args.author
+        )
+      ) {
+        throw new GraphQLError(
+          "Title must be unique, another book with the same title already exists",
+          {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.name,
+            },
+          }
+        );
+      }
+      // Could check the length of name, author, etc
+      authors = authors.concat({ name: args.author, id: uuid(), born: null });
+      const book = { ...args, id: uuid() };
+      books = books.concat(book);
+      return book;
     },
   },
 };
