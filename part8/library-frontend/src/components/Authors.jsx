@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useQuery } from "@apollo/client";
 import { ALL_AUTHORS } from "../queries";
 
@@ -6,7 +7,6 @@ import BirthYearForm from "./BirthYearForm";
 const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS);
 
-  // eslint-disable-next-line react/prop-types
   if (!props.show) {
     return null;
   }
@@ -38,7 +38,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <BirthYearForm authors={authors}></BirthYearForm>
+      {props.token ? <BirthYearForm authors={authors}></BirthYearForm> : null}
     </div>
   );
 };

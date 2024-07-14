@@ -90,9 +90,9 @@ const resolvers = {
 
     allBooks: async (root, args) => {
       if (Object.keys(args).length === 0) {
-        const cosos = await Book.find({}).populate("author");
-        console.log("cosos: ", cosos);
-        return cosos;
+        const coso = await Book.find({}).populate("author");
+        console.log("books: ", coso);
+        return coso;
       }
 
       if (args.genre && args.author) {
@@ -156,12 +156,18 @@ const resolvers = {
           }
         );
       }
+      if (args.genres.length === 0) {
+        throw new GraphQLError("The book must contain at least one genre", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.name,
+          },
+        });
+      }
       try {
-        console.log("args: ", args);
         let author = await Author.findOne({
           name: { $eq: args.author },
         });
-        console.log("Author: ", author);
 
         if (!author) {
           author = new Author({
@@ -242,7 +248,6 @@ const resolvers = {
 
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username });
-      console.log("userFound: ", user);
       // Hardcoded for testing purposes
       if (!user || args.password !== "secret") {
         throw new GraphQLError("wrong credentials", {

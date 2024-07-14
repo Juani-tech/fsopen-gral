@@ -21,7 +21,9 @@ const NewBook = (props) => {
         };
       });
       cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-        const author = response.data.addBook.author;
+        console.log("Response de la de books: ", response.data);
+        console.log("allAuthors: ", allAuthors);
+        const author = response.data.addBook.author.name;
         const foundAuthor = allAuthors.find((a) => a.name === author);
         if (!foundAuthor) {
           return {
