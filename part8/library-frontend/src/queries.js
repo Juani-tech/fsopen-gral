@@ -9,16 +9,22 @@ export const ALL_AUTHORS = gql`
     }
   }
 `;
+// bookCount;
 
 export const ALL_BOOKS = gql`
   query {
     allBooks {
       title
-      author
+      author {
+        name
+        born
+        bookCount
+      }
       published
     }
   }
 `;
+// author;
 
 export const CREATE_BOOK = gql`
   mutation createPerson(

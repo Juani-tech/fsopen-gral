@@ -5,7 +5,7 @@ const { GraphQLError } = require("graphql");
 
 const Author = require("./models/author");
 const Book = require("./models/book");
-const LibraryUser = require("./models/user");
+const User = require("./models/user");
 
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -37,8 +37,9 @@ const typeDefs = `
 
   type Author {
     name: String!
-    id: ID!,
+    id: ID!
     born: Int
+    bookCount: Int!
   }
     
   type Book { 
@@ -48,6 +49,7 @@ const typeDefs = `
       id: ID!
       genres: [String!]!
   }
+
   type Query {
       bookCount: Int!
       authorCount: Int!
@@ -88,7 +90,9 @@ const resolvers = {
 
     allBooks: async (root, args) => {
       if (Object.keys(args).length === 0) {
-        return await Book.find({}).populate("author");
+        const cosos = await Book.find({}).populate("author");
+        console.log("cosos: ", cosos);
+        return cosos;
       }
 
       if (args.genre && args.author) {
@@ -117,7 +121,9 @@ const resolvers = {
       }
     },
 
-    allAuthors: async () => await Author.find({}),
+    allAuthors: async () => {
+      return await Author.find({});
+    },
 
     me: (root, args, context) => {
       return context.currentUser;
@@ -151,11 +157,20 @@ const resolvers = {
         );
       }
       try {
-        const author = new Author({
-          name: args.author,
-          id: uuid(),
-          born: null,
+        console.log("args: ", args);
+        let author = await Author.findOne({
+          name: { $eq: args.author },
         });
+        console.log("Author: ", author);
+
+        if (!author) {
+          author = new Author({
+            name: args.author,
+            id: uuid(),
+            born: null,
+            bookCount: 0,
+          });
+        }
 
         const book = new Book({
           title: args.title,
@@ -163,9 +178,11 @@ const resolvers = {
           genres: args.genres,
           author: author,
         });
+        await book.save();
+
+        author.bookCount = author.bookCount + 1;
 
         await author.save();
-        await book.save();
         return book;
       } catch (error) {
         console.log(error);
@@ -207,7 +224,7 @@ const resolvers = {
     },
 
     createUser: async (root, args) => {
-      const user = new LibraryUser({
+      const user = new User({
         username: args.username,
         favoriteGenre: args.favoriteGenre,
       });
@@ -224,7 +241,7 @@ const resolvers = {
     },
 
     login: async (root, args) => {
-      const user = await LibraryUser.findOne({ username: args.username });
+      const user = await User.findOne({ username: args.username });
       console.log("userFound: ", user);
       // Hardcoded for testing purposes
       if (!user || args.password !== "secret") {
@@ -257,7 +274,7 @@ startStandaloneServer(server, {
         auth.substring(7),
         process.env.JWT_SECRET
       );
-      const currentUser = await LibraryUser.findById(decodedToken.id);
+      const currentUser = await User.findById(decodedToken.id);
       return { currentUser };
     }
   },
