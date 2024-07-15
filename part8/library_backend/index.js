@@ -56,6 +56,7 @@ const typeDefs = `
       allBooks(author: String, genre: String): [Book!]!
       allAuthors: [Author!]!
       me: User
+      allGenres: [String!]!
   }
   type Mutation {
       addBook(
@@ -89,10 +90,9 @@ const resolvers = {
     authorCount: async () => await Author.collection.countDocuments(),
 
     allBooks: async (root, args) => {
+      console.log("Args para allBooks: ", args);
       if (Object.keys(args).length === 0) {
-        const coso = await Book.find({}).populate("author");
-        console.log("books: ", coso);
-        return coso;
+        return await Book.find({}).populate("author");
       }
 
       if (args.genre && args.author) {
@@ -127,6 +127,19 @@ const resolvers = {
 
     me: (root, args, context) => {
       return context.currentUser;
+    },
+
+    allGenres: async () => {
+      const genres = await Book.aggregate([
+        {
+          $unwind: "$genres",
+        },
+        { $group: { _id: null, distinctGenres: { $addToSet: "$genres" } } },
+
+        { $project: { _id: 0, distinctGenres: 1 } },
+      ]);
+      // This returns an array with a dictionary which its only key is "distinctGenres"
+      return genres[0].distinctGenres;
     },
   },
 

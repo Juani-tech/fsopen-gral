@@ -1,31 +1,35 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
-import { ALL_GENRES, ALL_BOOKS } from "../queries";
+import { ALL_BOOKS, FAVORITE_GENRE } from "../queries";
 
-const Books = (props) => {
-  const genresResult = useQuery(ALL_GENRES);
-  const [actualGenre, setActualGenre] = useState("all genres");
+const Recommendations = (props) => {
   const [previousBooks, setPreviousBooks] = useState([]);
+  const [favoriteGenre, setFavoriteGenre] = useState(null);
 
-  const { loading: genresLoading, data: genresData } = genresResult;
+  const { loading: genreLoading, data: genreData } = useQuery(FAVORITE_GENRE);
 
-  const variables = actualGenre === "all genres" ? {} : { genre: actualGenre };
+  useEffect(() => {
+    if (genreData) {
+      setFavoriteGenre(genreData.me.favoriteGenre);
+    }
+  }, [genreData]);
 
+  // if the skip prop is set to true, the fetch isn't going to execute
   const {
     loading: booksLoading,
     data: booksData,
     refetch,
   } = useQuery(ALL_BOOKS, {
-    variables,
-    skip: !props.show,
+    variables: { genre: favoriteGenre },
+    skip: !props.show || genreLoading || !favoriteGenre,
   });
 
   useEffect(() => {
-    if (props.show) {
+    if (props.show && favoriteGenre) {
       refetch();
     }
-  }, [actualGenre, props.show, refetch]);
+  }, [props.show, favoriteGenre, refetch]);
 
   useEffect(() => {
     if (booksData && !booksLoading) {
@@ -37,29 +41,18 @@ const Books = (props) => {
     return null;
   }
 
-  if (genresLoading) {
-    return <div>loading genres...</div>;
+  if (genreLoading) {
+    return <div>loading...</div>;
   }
 
-  const genres = genresData.allGenres;
   const books = booksLoading ? previousBooks : booksData.allBooks;
 
   return (
     <div>
       <h2>books</h2>
-      <div>
-        <button key={"all genres"} onClick={() => setActualGenre("all genres")}>
-          all genres
-        </button>
-        {genres.map((genre) => (
-          <button key={genre} onClick={() => setActualGenre(genre)}>
-            {genre}
-          </button>
-        ))}
-      </div>
-
       {booksLoading && <div>loading books...</div>}
-
+      <p>books in your favorite genre</p>
+      <b>{favoriteGenre}</b>
       <table>
         <tbody>
           <tr>
@@ -80,4 +73,4 @@ const Books = (props) => {
   );
 };
 
-export default Books;
+export default Recommendations;
