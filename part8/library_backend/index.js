@@ -74,11 +74,14 @@ const start = async () => {
       context: async ({ req }) => {
         const auth = req ? req.headers.authorization : null;
         if (auth && auth.startsWith("Bearer ")) {
+          console.log("Got the token: ", auth.substring(7));
           const decodedToken = jwt.verify(
             auth.substring(7),
             process.env.JWT_SECRET
           );
+          console.log("Setting new user now");
           const currentUser = await User.findById(decodedToken.id);
+          console.log("currentUser: ", currentUser);
           return { currentUser };
         }
       },

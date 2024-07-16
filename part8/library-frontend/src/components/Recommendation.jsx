@@ -2,16 +2,27 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { ALL_BOOKS, FAVORITE_GENRE } from "../queries";
+import Table from "react-bootstrap/Table";
+import Stack from "react-bootstrap/Stack";
 
 const Recommendations = (props) => {
   const [previousBooks, setPreviousBooks] = useState([]);
   const [favoriteGenre, setFavoriteGenre] = useState(null);
 
-  const { loading: genreLoading, data: genreData } = useQuery(FAVORITE_GENRE);
+  const {
+    loading: genreLoading,
+    data: genreData,
+    refetch: refetchFavoriteGenre,
+  } = useQuery(FAVORITE_GENRE);
 
   useEffect(() => {
-    console.log("genreData: ", genreData);
-    if (genreData) {
+    if (!favoriteGenre) {
+      refetchFavoriteGenre();
+    }
+  }, [favoriteGenre, props.show, refetchFavoriteGenre]);
+
+  useEffect(() => {
+    if (genreData && genreData.me) {
       setFavoriteGenre(genreData.me.favoriteGenre);
     }
   }, [genreData]);
@@ -38,6 +49,10 @@ const Recommendations = (props) => {
     }
   }, [booksData, booksLoading]);
 
+  if (!props.token) {
+    return null;
+  }
+
   if (!props.show) {
     return null;
   }
@@ -46,15 +61,19 @@ const Recommendations = (props) => {
     return <div>loading...</div>;
   }
 
+  if (booksLoading) {
+    return <div>loading...</div>;
+  }
+
   const books = booksLoading ? previousBooks : booksData.allBooks;
 
   return (
-    <div>
-      <h2>books</h2>
+    <Stack gap={3}>
+      <h2>Books</h2>
       {booksLoading && <div>loading books...</div>}
-      <p>books in your favorite genre</p>
+      <p>Recommended books</p>
       <b>{favoriteGenre}</b>
-      <table>
+      <Table responsive striped hover={true} className="p-2">
         <tbody>
           <tr>
             <th></th>
@@ -69,8 +88,8 @@ const Recommendations = (props) => {
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+      </Table>
+    </Stack>
   );
 };
 

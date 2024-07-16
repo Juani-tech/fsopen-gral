@@ -56,6 +56,9 @@ const typeDefs = `
   }
   type Subscription {
     bookAdded: Book!
-  }
+    genresAdded: [String!]!
+    authorAdded: Author!
+  } 
 `;
+
 module.exports = typeDefs;

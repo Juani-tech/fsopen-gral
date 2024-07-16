@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from "../queries";
+import { ALL_AUTHORS, CREATE_BOOK } from "../queries";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/esm/Container";
 
 const NewBook = (props) => {
   const [title, setTitle] = useState("");
@@ -11,18 +14,10 @@ const NewBook = (props) => {
 
   const [createBook] = useMutation(CREATE_BOOK, {
     onError: (error) => {
-      const messages = error.graphQLErrors.map((e) => e.message).join("\n");
-      console.log("messages: ", messages);
+      console.log("error: ", error);
     },
     update: (cache, response) => {
-      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-        return {
-          allBooks: allBooks.concat(response.data.addBook),
-        };
-      });
       cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-        console.log("Response de la de books: ", response.data);
-        console.log("allAuthors: ", allAuthors);
         const author = response.data.addBook.author.name;
         const foundAuthor = allAuthors.find((a) => a.name === author);
         if (!foundAuthor) {
@@ -79,68 +74,54 @@ const NewBook = (props) => {
   };
 
   return (
-    <div>
-      <form onSubmit={submit}>
-        <div>
-          title
-          <input
+    <Container>
+      <Form onSubmit={submit}>
+        <Form.Group className="mb-3" controlId="formTitle">
+          <Form.Label>Title</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="title"
             value={title}
             onChange={({ target }) => setTitle(target.value)}
           />
-        </div>
-        <div>
-          author
-          <input
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formAuthor">
+          <Form.Label>Author</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="author"
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
           />
-        </div>
-        <div>
-          published
-          <input
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formPublished">
+          <Form.Label>Published</Form.Label>
+          <Form.Control
             type="number"
+            placeholder="year"
             value={published}
             onChange={({ target }) => setPublished(target.value)}
           />
-        </div>
-        <div>
-          <input
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formGenres">
+          <Form.Label>Genres</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="genre"
             value={genre}
             onChange={({ target }) => setGenre(target.value)}
           />
-          <button onClick={addGenre} type="button">
+          <Button variant="primary" onClick={addGenre} type="button">
             add genre
-          </button>
-        </div>
-        <div>genres: {genres.join(" ")}</div>
-        <button type="submit">create book</button>
-      </form>
-    </div>
+          </Button>
+        </Form.Group>
+        <Container>genres: {genres.join(" ")}</Container>
+        <Button type="submit" variant="primary">
+          create book
+        </Button>
+      </Form>
+    </Container>
   );
 };
 
 export default NewBook;
-
-// const [ createPerson ] = useMutation(CREATE_PERSON, {
-//   onError: (error) => {
-//     const messages = error.graphQLErrors.map(e => e.message).join('\n')
-//     setError(messages)
-//   },
-//   update: (cache, response) => {
-//     cache.updateQuery({ query: ALL_PERSONS }, ({ allPersons }) => {
-//       return {
-//         allPersons: allPersons.concat(response.data.addPerson),
-//       }
-//     })
-//   },
-// })
-
-// const submit = async (event) => {
-//   event.preventDefault()
-
-//   createPerson({
-//     variables: {
-//       name, street, city,
-//       phone: phone.length > 0 ? phone : undefined
-//     }
-//   })

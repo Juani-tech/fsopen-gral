@@ -2,9 +2,14 @@
 import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { ALL_AUTHORS, EDIT_BIRTH_YEAR } from "../queries";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Stack from "react-bootstrap/Stack";
 
 const BirthYearForm = ({ authors }) => {
-  const [name, setSelectedAuthor] = useState(authors[0].name);
+  const [name, setSelectedAuthor] = useState(
+    authors.length < 1 ? null : authors[0].name
+  );
   const [birthYear, setBirthYear] = useState("");
 
   const [changeBirthYear, result] = useMutation(EDIT_BIRTH_YEAR, {
@@ -31,6 +36,10 @@ const BirthYearForm = ({ authors }) => {
     }
   }, [result.data]);
 
+  if (authors.length < 1) {
+    return null;
+  }
+
   const submit = (event) => {
     event.preventDefault();
 
@@ -41,39 +50,42 @@ const BirthYearForm = ({ authors }) => {
   };
 
   return (
-    <>
-      <h2>Set birthyear</h2>
-      <form onSubmit={submit}>
-        <select
-          value={name}
-          onChange={(e) => setSelectedAuthor(e.target.value)}
-          default={authors[0].name}
-        >
-          {authors.map((a) => {
-            return (
-              <option value={a.name} key={a.name}>
-                {a.name}
-              </option>
-            );
-          })}
-        </select>
-        {/* <div>
-          name
-          <input
+    <Stack gap={3}>
+      <h2 className="p-2">Set birthyear</h2>
+
+      <Form onSubmit={submit} className="p-2">
+        <Form.Group className="mb-3" controlId="formName">
+          <Form.Select
+            aria-label="Default select example"
             value={name}
-            onChange={({ target }) => setName(target.value)}
-          ></input>
-        </div> */}
-        <div>
-          born
-          <input
+            onChange={(e) => setSelectedAuthor(e.target.value)}
+            default={authors[0].name}
+          >
+            {authors.map((a) => {
+              return (
+                <option value={a.name} key={a.name}>
+                  {a.name}
+                </option>
+              );
+            })}
+          </Form.Select>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formBirthYear">
+          <Form.Label>Birth Year</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="year"
             value={birthYear}
             onChange={({ target }) => setBirthYear(target.value)}
-          ></input>
-        </div>
-        <button type="submit">update name</button>
-      </form>
-    </>
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formSubmitBirthUpdate">
+          <Button variant="primary" type="submit">
+            update birth year
+          </Button>
+        </Form.Group>
+      </Form>
+    </Stack>
   );
 };
 

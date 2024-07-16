@@ -95,3 +95,15 @@ export const BOOK_ADDED = gql`
 
   ${BOOK_DETAILS}
 `;
+
+export const GENRES_ADDED = gql`
+  subscription {
+    genresAdded
+  }
+`;
+
+export const AUTHOR_ADDED = gql`
+  subscription {
+    authorAdded
+  }
+`;

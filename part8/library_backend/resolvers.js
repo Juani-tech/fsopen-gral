@@ -15,7 +15,6 @@ const resolvers = {
     allBooks: async (root, args) => {
       if (Object.keys(args).length === 0) {
         const books = await Book.find({}).populate("author");
-        console.log("books: ", books);
         return books;
       }
 
@@ -50,7 +49,7 @@ const resolvers = {
     },
 
     me: (root, args, context) => {
-      console.log("devuelvo: ", context.currentUser);
+      console.log("context.currentUser: ", context.currentUser);
       return context.currentUser;
     },
 
@@ -63,8 +62,12 @@ const resolvers = {
 
         { $project: { _id: 0, distinctGenres: 1 } },
       ]);
-      // This returns an array with a dictionary which its only key is "distinctGenres"
-      return genres[0].distinctGenres;
+      if (genres.length > 0) {
+        // This returns an array with a dictionary which its only key is "distinctGenres"
+        return genres[0].distinctGenres;
+      } else {
+        return genres;
+      }
     },
   },
 
@@ -124,6 +127,8 @@ const resolvers = {
             born: null,
             bookCount: 0,
           });
+          // Publish only if the author is new
+          pubsub.publish("AUTHOR_ADDED", { authorAdded: author });
         }
 
         const book = new Book({
@@ -139,6 +144,8 @@ const resolvers = {
         await author.save();
 
         pubsub.publish("BOOK_ADDED", { bookAdded: book });
+        // Can they be repeated?
+        pubsub.publish("GENRES_ADDED", { genresAdded: args.genres });
 
         return book;
       } catch (error) {
@@ -217,6 +224,12 @@ const resolvers = {
   Subscription: {
     bookAdded: {
       subscribe: () => pubsub.asyncIterator("BOOK_ADDED"),
+    },
+    genresAdded: {
+      subscribe: () => pubsub.asyncIterator("GENRES_ADDED"),
+    },
+    authorAdded: {
+      subscribe: () => pubsub.asyncIterator("AUTHOR_ADDED"),
     },
   },
 };
