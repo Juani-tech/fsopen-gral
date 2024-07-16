@@ -1,7 +1,25 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
-import { ALL_GENRES, ALL_BOOKS } from "../queries";
+import { useQuery, useSubscription } from "@apollo/client";
+import { ALL_GENRES, ALL_BOOKS, BOOK_ADDED } from "../queries";
+
+const updateCache = (cache, query, addedBook) => {
+  const uniqByName = (a) => {
+    let seen = new Set();
+    return a.filter((item) => {
+      let k = item.title;
+      return seen.has(k) ? false : seen.add(k);
+    });
+  };
+
+  cache.updateQuery(query, (data) => {
+    if (!data) return { allBooks: [addedBook] }; // Handle the case where data is null
+    const { allBooks } = data;
+    return {
+      allBooks: uniqByName(allBooks.concat(addedBook)),
+    };
+  });
+};
 
 const Books = (props) => {
   const genresResult = useQuery(ALL_GENRES);
@@ -11,6 +29,14 @@ const Books = (props) => {
   const { loading: genresLoading, data: genresData } = genresResult;
 
   const variables = actualGenre === "all genres" ? {} : { genre: actualGenre };
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+      const bookAdded = data.data.bookAdded;
+      window.alert(`${bookAdded.title} added`);
+      updateCache(client.cache, { query: ALL_BOOKS }, bookAdded);
+    },
+  });
 
   const {
     loading: booksLoading,

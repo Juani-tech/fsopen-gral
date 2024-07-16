@@ -7,13 +7,7 @@ const PhoneForm = ({ setError }) => {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
 
-  const [ changeNumber, result ] = useMutation(EDIT_NUMBER)
-
-  useEffect(() => {
-    if (result.data && result.data.editNumber === null) {
-      setError('person not found')
-    }
-  }, [result.data])
+  const [changeNumber, result] = useMutation(EDIT_NUMBER)
 
   const submit = async (event) => {
     event.preventDefault()
@@ -24,24 +18,32 @@ const PhoneForm = ({ setError }) => {
     setPhone('')
   }
 
+  useEffect(() => {
+    if (result.data && result.data.editNumber === null) {
+      setError('person not found')
+    }
+  }, [result.data]) // eslint-disable-line
+
   return (
     <div>
       <h2>change number</h2>
 
       <form onSubmit={submit}>
         <div>
-          name <input
+          name{' '}
+          <input
             value={name}
             onChange={({ target }) => setName(target.value)}
           />
         </div>
         <div>
-          phone <input
+          phone{' '}
+          <input
             value={phone}
             onChange={({ target }) => setPhone(target.value)}
           />
         </div>
-        <button type='submit'>change number</button>
+        <button type="submit">change number</button>
       </form>
     </div>
   )

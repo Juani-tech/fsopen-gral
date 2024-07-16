@@ -50,6 +50,7 @@ const resolvers = {
     },
 
     me: (root, args, context) => {
+      console.log("devuelvo: ", context.currentUser);
       return context.currentUser;
     },
 

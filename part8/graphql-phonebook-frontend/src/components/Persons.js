@@ -1,8 +1,20 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
-import Person from './Person'
 
 import { FIND_PERSON } from '../queries'
+
+const Person = ({ person, onClose }) => {
+  return (
+    <div>
+      <h2>{person.name}</h2>
+      <div>
+        {person.address.street} {person.address.city}
+      </div>
+      <div>{person.phone}</div>
+      <button onClick={onClose}>close</button>
+    </div>
+  )
+}
 
 const Persons = ({ persons }) => {
   const [nameToSearch, setNameToSearch] = useState(null)
@@ -26,9 +38,7 @@ const Persons = ({ persons }) => {
       {persons.map((p) => (
         <div key={p.name}>
           {p.name} {p.phone}
-          <button onClick={() => setNameToSearch(p.name)}>
-            show address
-          </button>
+          <button onClick={() => setNameToSearch(p.name)}>show address</button>
         </div>
       ))}
     </div>

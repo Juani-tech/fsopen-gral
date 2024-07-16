@@ -10,6 +10,7 @@ const Recommendations = (props) => {
   const { loading: genreLoading, data: genreData } = useQuery(FAVORITE_GENRE);
 
   useEffect(() => {
+    console.log("genreData: ", genreData);
     if (genreData) {
       setFavoriteGenre(genreData.me.favoriteGenre);
     }

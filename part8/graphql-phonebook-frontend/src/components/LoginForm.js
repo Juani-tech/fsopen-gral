@@ -1,43 +1,43 @@
-import React, { useState, useEffect } from "react";
-import { useMutation } from "@apollo/client";
-import { LOGIN } from "../queries";
+import React, { useState, useEffect } from 'react'
+import { useMutation } from '@apollo/client'
+import { LOGIN } from '../queries'
 
 const LoginForm = ({ setError, setToken }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
-      setError(error.graphQLErrors[0].message);
+      setError(error.graphQLErrors[0].message)
     },
-  });
+  })
 
   useEffect(() => {
     if (result.data) {
-      const token = result.data.login.value;
-      setToken(token);
-      localStorage.setItem("phonenumbers-user-token", token);
+      const token = result.data.login.value
+      setToken(token)
+      localStorage.setItem('phonenumbers-user-token', token)
     }
-  }, [result.data]); // eslint-disable-line
+  }, [result.data]) // eslint-disable-line
 
   const submit = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    login({ variables: { username, password } });
-  };
+    login({ variables: { username, password } })
+  }
 
   return (
     <div>
       <form onSubmit={submit}>
         <div>
-          username{" "}
+          username{' '}
           <input
             value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
-          password{" "}
+          password{' '}
           <input
             type="password"
             value={password}
@@ -47,7 +47,7 @@ const LoginForm = ({ setError, setToken }) => {
         <button type="submit">login</button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm
