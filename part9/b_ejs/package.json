@@ -1,0 +1,27 @@
+{
+  "name": "b_ejs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "calculateBmi": "ts-node bmiCalculator.ts",
+    "calculateExercises": "ts-node exerciseCalculator.ts",
+    "start": "ts-node index.ts",
+    "dev": "ts-node-dev index.ts",
+    "lint": "eslint --ext .ts ."
+
+  },
+  "author": "Juani",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
+    "eslint": "^8.57.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
