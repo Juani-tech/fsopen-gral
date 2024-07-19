@@ -36,4 +36,8 @@ router.post("/", (req, res) => {
   }
 });
 
+// router.post("/:id/entries", (req, res) => {
+
+// })
+
 export default router;
