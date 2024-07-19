@@ -19,3 +19,9 @@ export interface DiaryEntry {
   weather: Weather;
   visibility: Visibility;
 }
+
+interface CompleteDiaryEntry extends DiaryEntry {
+  comment: string;
+}
+
+export type NewDiaryEntry = Omit<CompleteDiaryEntry, "id">;
