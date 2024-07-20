@@ -30,7 +30,7 @@ const HealthCheckEntryView = ({ entry }: HealthCheckProps) => {
   return (
     <>
       <p>
-        {entry.date} {entry.description}
+        {entry.date.toString()} {entry.description}
       </p>
 
       <FavoriteIcon

@@ -175,18 +175,18 @@ export const toNewEntry = (object: unknown): NewEntry => {
         break;
       }
       case "Hospital": {
-        if ("discharge" in object) {
-          const newEntry: NewEntry = {
-            description: parseDescription(object.description),
-            date: parseDate(object.date),
-            diagnosisCodes: parseDiagnosisCodes(object),
-            type: "Hospital",
-            specialist: parseSpecialist(object.specialist),
-            discharge: parseDischarge(object.discharge),
-          };
-          return newEntry;
-        }
-        break;
+        const newEntry: NewEntry = {
+          description: parseDescription(object.description),
+          date: parseDate(object.date),
+          diagnosisCodes: parseDiagnosisCodes(object),
+          type: "Hospital",
+          specialist: parseSpecialist(object.specialist),
+          discharge:
+            "discharge" in object
+              ? parseDischarge(object.discharge)
+              : undefined,
+        };
+        return newEntry;
       }
       case "OccupationalHealthcare": {
         if ("employerName" in object && "sickLeave" in object) {

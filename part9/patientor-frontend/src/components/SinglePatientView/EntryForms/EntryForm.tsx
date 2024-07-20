@@ -4,8 +4,14 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import HospitalEntryForm from "./HospitalEntryForm";
+import OccupationalHealthcareForm from "./OccupationalHealthcareEntryForm";
+import HealthCheckEntryForm from "./HealthCheckEntryForm";
 
-const EntryForm = () => {
+interface EntryFormProps {
+  patientId: string | null | undefined;
+}
+
+const EntryForm = ({ patientId }: EntryFormProps) => {
   const [formShown, setFormShown] = useState("");
 
   console.log("formShown " + formShown);
@@ -36,15 +42,26 @@ const EntryForm = () => {
           </MenuItem>
           <MenuItem value={"hospital"}>Hospital</MenuItem>
           <MenuItem value={"healthCheck"}>Health Check</MenuItem>
-          <MenuItem value={"occupationHealthCheck"}>
-            Occupational Health Check
+          <MenuItem value={"occupationHealthcare"}>
+            Occupational Healthcare
           </MenuItem>
         </Select>
       </FormControl>
       <HospitalEntryForm
         show={formShown === "hospital"}
         resetForm={resetForm}
+        patientId={patientId}
       ></HospitalEntryForm>
+      <OccupationalHealthcareForm
+        show={formShown === "occupationHealthcare"}
+        resetForm={resetForm}
+        patientId={patientId}
+      ></OccupationalHealthcareForm>{" "}
+      <HealthCheckEntryForm
+        show={formShown === "healthCheck"}
+        resetForm={resetForm}
+        patientId={patientId}
+      ></HealthCheckEntryForm>
     </div>
   );
 };

@@ -11,13 +11,13 @@ const OccupationalHealthcareEntryView = ({
   return (
     <>
       <p>
-        {entry.date} {entry.description}
+        {entry.date.toString()} {entry.description}
       </p>
       <p>Employer name: {entry.employerName}</p>
       {entry.diagnosisCodes && (
         <div>
           <h3>Sick leave</h3>
-          <p>Start date: {entry.sickLeave?.startDate} </p>
+          <p>Start date: {entry.sickLeave?.startDate.toString()} </p>
           <p>End date: {entry.sickLeave?.endDate}</p>
         </div>
       )}
