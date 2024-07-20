@@ -1,4 +1,4 @@
-import { HospitalEntry } from "../types";
+import { HospitalEntry } from "../../types";
 import Diagnoses from "./Diagnoses";
 
 interface HospitalEntryProps {

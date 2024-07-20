@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Diagnosis } from "../types";
-import diagnosesService from "../services/diagnoses";
+import { Diagnosis } from "../../types";
+import diagnosesService from "../../services/diagnoses";
 
 interface DiagnosisProps {
   diagnoses: Array<Diagnosis["code"]>;

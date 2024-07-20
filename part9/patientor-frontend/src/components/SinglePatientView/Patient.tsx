@@ -1,9 +1,10 @@
-import { Patient } from "../types";
+import { Patient } from "../../types";
 import { useEffect, useState } from "react";
-import patientService from "../services/patients";
+import patientService from "../../services/patients";
 import MaleIcon from "@mui/icons-material/Male";
 import FemaleIcon from "@mui/icons-material/Female";
 import Entries from "./Entries";
+import EntryForm from "./EntryForm";
 
 interface PatientProps {
   patientId: string | null | undefined;
@@ -29,6 +30,7 @@ const PatientView = ({ patientId }: PatientProps) => {
 
   return (
     <>
+      <EntryForm></EntryForm>
       <h3>{patient.name}</h3>
       {patient.gender === "male" && <MaleIcon></MaleIcon>}
       {patient.gender === "female" && <FemaleIcon></FemaleIcon>}
