@@ -6,7 +6,8 @@ const { getAsync, setAsync } = require("../redis/index");
 /* GET todos listing. */
 router.get("/", async (_, res) => {
   const todos = await Todo.find({});
-
+  console.log("🚀 ~ router.get ~ todos:", todos)
+  
   res.send(todos);
 });
 

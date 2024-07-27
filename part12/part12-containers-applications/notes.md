@@ -360,3 +360,83 @@ services:
 ```
 
 Los datos ahora se almacenarán en el directorio redis_data de la máquina host. ¡Recuerda agregar el directorio a .gitignore!
+
+## Orquestacion
+
+### React en un container
+
+Serving static files in Express
+
+```
+app.use(express.static('public'))
+```
+
+### Servir archivos estaticos con serve
+
+Una opción válida para servir archivos estáticos ahora que ya tenemos Node en el contenedor es serve. Intentemos instalar serve y servir los archivos estáticos mientras estamos dentro del contenedor.
+
+```
+npm install -g serve
+serve dist
+```
+
+```
+FROM node:20
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN npm ci
+
+RUN npm run build
+
+
+RUN npm install -g serve
+
+
+CMD ["serve", "dist"]
+
+```
+
+docker build . -t hello-front y la ejecutamos con docker run -p 5000:3000 hello-front, la aplicación estará disponible en http://localhost:5000.
+
+### Usar multiples etapas
+
+Si bien serve es una opción válida, podemos hacerlo mejor. Un buen objetivo es crear imágenes de Docker para que no contengan nada irrelevante. Con un número mínimo de dependencias, es menos probable que las imágenes se rompan o se vuelvan vulnerables con el tiempo.
+
+Los builds de varias etapas están diseñadas para dividir el proceso de compilación en muchas etapas separadas, donde es posible limitar qué partes de los archivos de imagen se mueven entre las etapas.
+
+Con builds de varias etapas, se puede usar una solución probada y robusta como Nginx para servir archivos estáticos sin muchos dolores de cabeza. La página de Nginx de Docker Hub nos brinda la información necesaria para abrir los puertos y "Alojamiento de contenido estático simple".
+
+Usemos el Dockerfile anterior pero cambiemos FROM para incluir el nombre de la etapa:
+
+- El primer FROM ahora es una etapa llamada build-stage
+
+```
+FROM node:20 AS build-stage
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN npm ci
+
+RUN npm run build
+
+# Esta es una nueva etapa, todo lo anterior a esta linea ha desaparecido, excepto por los archivos que queremos COPIAR
+FROM nginx:1.25-alpine
+
+# COPIA el directorio dist de build-stage a /usr/share/nginx/html
+# El destino fue encontrado en la pagina de Docker hub
+COPY --from=build-stage /usr/src/app/dist /usr/share/nginx/html
+
+```
+
+Hemos declarado también otra etapa, de donde solo se mueven los archivos relevantes de la primera etapa (el directorio dist, que contiene el contenido estático).
+
+Después de que la construimos de nuevo, la imagen está lista para servir el contenido estático. El puerto predeterminado será 80 para Nginx, por lo que algo como -p 8000:80 funcionará, por lo que los parámetros del comando RUN deben cambiarse un poco.
+
+Los builds de varias etapas también incluyen algunas optimizaciones internas que pueden afectar tus builds. Como ejemplo, los builds de varias etapas se saltan las etapas que no se utilizan. Si deseamos usar una etapa para reemplazar una parte de un pipeline de build, como pruebas o notificaciones, debemos pasar algunos datos a las siguientes etapas. En algunos casos esto está justificado: copia el código de la etapa de prueba a la etapa de build. Esto garantiza que estás haciendo el build con el código probado.
+
+- Con un export va bien para settear VITE_BACKEND_URL fuera del container
