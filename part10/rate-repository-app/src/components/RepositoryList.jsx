@@ -62,7 +62,6 @@ const RepositoryList = () => {
     <FlatList
       data={repositories}
       ItemSeparatorComponent={ItemSeparator}
-      // other props
       renderItem={({ item }) => <RepositoryItem data={item} />}
     />
   );
